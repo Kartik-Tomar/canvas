@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import html2canvas from "html2canvas";
 import backgroundImage from './assets/background-image.png';
+import bg1Image from './assets/bg-1.png';
+import bg2Image from './assets/bg-2.png';
+import bg3Image from './assets/bg-3.png';
 import imageCompression from 'browser-image-compression'
 
 function App() {  
   const [textOnImage, setTextOnImage] = useState('Test');
   const [fontSize, setFontSize] = useState(24);
   const [fontWeight, setFontWeight] = useState(600);
-  const [fontColor, setFontColor] = useState('#000000');
-  const [image, setImage] = useState(backgroundImage);
+  const [fontColor, setFontColor] = useState('#ffffff');
+  const [image, setImage] = useState(bg2Image);
   const [imageProp, setImageProp] = useState(null);
   const [newImage, setNewImage] = useState(null)
   const handleBtnClick = () => {
@@ -74,10 +77,19 @@ function App() {
       console.log('width', width, 'height', height);
       setImageProp({width, height})
     }, 1000);
-  }, [image])
+  }, [image]);
+
+  const handleSelectImages = (e) => {
+    setImage(e.target.src);
+  };
 
   return (
     <div className="App">
+      <h3>Select Photo or upload</h3>
+      <img src={bg1Image} alt="select" className="select-image" onClick={handleSelectImages} />
+      <img src={bg2Image} alt="select" className="select-image" onClick={handleSelectImages} />
+      <img src={bg3Image} alt="select" className="select-image" onClick={handleSelectImages} />
+      <img src={backgroundImage} alt="select" className="select-image" onClick={handleSelectImages} />
       <div className='values'>
         <label>Photo: </label>
         <input type="file" onChange={onImageChange} />
