@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import html2canvas from "html2canvas";
 import backgroundImage from './assets/background-image.png';
+import imageCompression from 'browser-image-compression'
 
 function App() {  
   const [textOnImage, setTextOnImage] = useState('Test');
   const [fontSize, setFontSize] = useState(24);
   const [fontWeight, setFontWeight] = useState(600);
   const [fontColor, setFontColor] = useState('#000000');
+  const [image, setImage] = useState(backgroundImage);
+  const [imageProp, setImageProp] = useState(null);
+  const [newImage, setNewImage] = useState(null)
   const handleBtnClick = () => {
     let div = document.getElementById('container');
 
@@ -15,18 +19,69 @@ function App() {
     // function to take a screenshot
     // and append it
     // to the output div
-    console.log(html2canvas);
-    html2canvas(div).then(function (canvas) {
+    html2canvas(div).then((canvas) => {
       document.getElementById('output').appendChild(canvas);
-      var anchor = document.createElement('a');
-      anchor.href = canvas.toDataURL('image/png');
-      anchor.download = 'IMAGE.PNG';
-      anchor.click();
+      const options = {
+        maxSizeMB: 0.065,
+        maxWidthOrHeight: 720,
+        useWebWorker: true
+      };
+      canvas.toBlob(async (blob) => {
+        try {
+          const compressedFile = await imageCompression(blob, options);
+          console.log('compressedFile instanceof Blob', compressedFile); // true
+          let url = URL.createObjectURL(compressedFile);
+          setNewImage(url);
+          var anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = 'IMAGE.PNG';
+          anchor.click();
+        } catch (error) {
+          console.log(error);
+        }
+      });
+
+      // var anchor = document.createElement('a');
+      // anchor.href = canvas.toDataURL(canvas);
+      // anchor.download = 'IMAGE.PNG';
+      // anchor.click();
     });
   };
+
+  const onImageChange = async (e) => {
+    const options = {
+      maxSizeMB: 0.07,
+      maxWidthOrHeight: 720,
+      useWebWorker: true
+    };
+    try {
+      const compressedFile = await imageCompression(e.target.files[0], options);
+      console.log('compressedFile instanceof Blob', compressedFile); // true
+      let url = URL.createObjectURL(compressedFile);
+      setImage(url);
+    } catch (error) {
+      console.log(error);
+    }
+    // let url = URL.createObjectURL(e.target.files[0]);
+    // setImage(url);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      let img = document.getElementById('image-pro');
+      let width = img.clientWidth;
+      let height = img.clientHeight;
+      console.log('width', width, 'height', height);
+      setImageProp({width, height})
+    }, 1000);
+  }, [image])
+
   return (
     <div className="App">
       <div className='values'>
+        <label>Photo: </label>
+        <input type="file" onChange={onImageChange} />
+        <br />
         <label>Text: </label>
         <input type="text" value={textOnImage} onChange={e => setTextOnImage(e.target.value)} />
         <br />
@@ -42,12 +97,17 @@ function App() {
         <input type="color" value={fontColor} onChange={e => setFontColor(e.target.value)} />
         <input type="text" value={fontColor} onChange={e => setFontColor(e.target.value)} />
       </div>
+      <h4>Note: Image width: 720px and Height: 440px. Therefore upload with correct aspect ration</h4>
+      <h3>Current image width: {imageProp?.width}px and height: {imageProp?.height}px</h3>
       <div id="container">
-        <img src={backgroundImage} width="300" height="175" alt="bc" />
+        <img src={image} width="360" height="220" alt="bc" />
         <h1 className="centered" style={{ fontSize: fontSize, fontWeight: fontWeight, color: fontColor }}>{textOnImage}</h1>
       </div>
       <button onClick={handleBtnClick}>take screen shot</button>
+      <br />
+      {newImage && <img src={newImage} alt="ss" />}
       <div id="output"></div>
+      <img src={image} alt="bc" id='image-pro' />
     </div>
   );
 }
