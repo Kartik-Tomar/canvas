@@ -12,6 +12,11 @@ function App() {
   const [fontSize, setFontSize] = useState(24);
   const [fontWeight, setFontWeight] = useState(600);
   const [fontColor, setFontColor] = useState('#ffffff');
+  const [textOnImage2, setTextOnImage2] = useState('2nd Test');
+  const [fontSize2, setFontSize2] = useState(12);
+  const [fontWeight2, setFontWeight2] = useState(600);
+  const [fontColor2, setFontColor2] = useState('#ffffff');
+  const [use2Text, setUse2Text] = useState(false);
   const [image, setImage] = useState(bg2Image);
   const [imageProp, setImageProp] = useState(null);
   const [newImage, setNewImage] = useState(null)
@@ -109,11 +114,36 @@ function App() {
         <input type="color" value={fontColor} onChange={e => setFontColor(e.target.value)} />
         <input type="text" value={fontColor} onChange={e => setFontColor(e.target.value)} />
       </div>
+      <div className='values'>
+        <button style={{marginBottom: '5px'}} onClick={() => setUse2Text(!use2Text)}>{use2Text ? 'Remove' : 'Add'} 2nd text block</button>
+        <br/>
+        {use2Text && (
+          <>
+            <label>Text 2: </label>
+            <input type="text" value={textOnImage2} onChange={e => setTextOnImage2(e.target.value)} />
+            <br />
+            <label>Font Size in px: </label>
+            <input type="range" min="10" max="70" value={fontSize2} onChange={e => setFontSize2(parseInt(e.target.value))} />
+            <input type="number" value={fontSize2} onChange={e => setFontSize2(e.target.value)} />
+            <br />
+            <label>Font Weight: </label>
+            <input type="range" min="100" max="900" value={fontWeight2} onChange={e => setFontWeight2(parseInt(e.target.value))} />
+            <input type="number" value={fontWeight2} onChange={e => setFontWeight2(e.target.value)} />
+            <br />
+            <label>Font Color: </label>
+            <input type="color" value={fontColor2} onChange={e => setFontColor2(e.target.value)} />
+            <input type="text" value={fontColor2} onChange={e => setFontColor2(e.target.value)} />
+          </>
+        )}
+      </div>
       <h4>Note: Image width: 720px and Height: 440px. Therefore upload with correct aspect ration</h4>
       <h3>Current image width: {imageProp?.width}px and height: {imageProp?.height}px</h3>
       <div id="container">
         <img src={image} width="360" height="220" alt="bc" />
-        <h1 className="centered" style={{ fontSize: fontSize, fontWeight: fontWeight, color: fontColor }}>{textOnImage}</h1>
+        <div className='centered'>
+        <h1 style={{ fontSize: fontSize, fontWeight: fontWeight, color: fontColor }}>{textOnImage}</h1>
+        {use2Text && <p style={{ fontSize: fontSize2, fontWeight: fontWeight2, color: fontColor2 }}>{textOnImage2}</p>}
+        </div>
       </div>
       <button onClick={handleBtnClick}>take screen shot</button>
       <br />
